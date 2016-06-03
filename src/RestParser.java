@@ -35,7 +35,7 @@ public class RestParser {
             if (this.cities.length > 0)
                 cityUrls = getCitiesUrls(doc, this.cities);
             else
-            cityUrls = getCitiesUrls(doc);
+                cityUrls = getCitiesUrls(doc);
 
             String cityUrlString;
             for (String cityName: cityUrls.keySet()) {
@@ -88,15 +88,12 @@ public class RestParser {
      */
     private HashMap<String, String> getCitiesUrls(Document html_doc, String[] cities) {
         HashMap<String, String> cityUrls = new HashMap<String, String>();
-        String selectorString;
-        Elements cityUrlElements;
-
         String cityUrl, cityName;
-        for (String city: cities) {
-            selectorString = String.format(Selectors.cityUrlTemplate, city);
-            cityUrlElements = html_doc.select(selectorString);
+        Element cityUrlElement;
 
-            for (Element cityUrlElement: cityUrlElements) {
+        for(String city: cities) {
+            cityUrlElement = html_doc.select(String.format(Selectors.cityUrlTemplate, city)).first();
+            if (cityUrlElement != null) {
                 cityUrl = cityUrlElement.attr("abs:href");
                 cityName = getCityFromText(cityUrlElement.attr("title"));
                 cityUrls.put(cityName, cityUrl);
