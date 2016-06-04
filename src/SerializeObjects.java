@@ -14,15 +14,21 @@ public class SerializeObjects {
         delimiter = delimiter;
     }
 
-    private static String addBracks(String str) {
-        return String.format("\"%s\"", str);
+    /**
+     *
+     * @param str What we want to write
+     * @return str in CSV format (between quotes, escaped inside quotes)
+     */
+    private static String csvIfy(String str) {
+        String escapedStr = str.replace("\"", "\"\"");
+        return String.format("\"%s\"", escapedStr);
     }
 
     private static void writeHeaders(OutputStreamWriter fw, String[] headers) {
 
         try {
             for (int i = 0; i < headers.length; i++) {
-                fw.append(addBracks(headers[i]));
+                fw.append(csvIfy(headers[i]));
                 if (i < headers.length - 1)
                     fw.append(delimiter);
             }
@@ -51,7 +57,7 @@ public class SerializeObjects {
                 }
                 else
                     fieldValue = field.get(object).toString();
-                fw.append(addBracks(fieldValue));
+                fw.append(csvIfy(fieldValue));
 
                 //add delimiter between fields unless it's the last one. in that case write newline
                 if (i == fieldOrder.length - 1)
