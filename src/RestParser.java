@@ -124,11 +124,17 @@ public class RestParser {
             for (int pageIndex=1; pageIndex  <=lastPage; pageIndex++) {
                 cityPageUrl = String.format(cityPageUrlTemplate, cityUrl, pageIndex);
                 pageRestaurants = getPageRestaurants(cityPageUrl, cityName);
-                System.out.println(String.format("Parsed %d pages from page %d in country %s",
+                System.out.println(String.format("parsed %d restaurants from page %d/%d in country %s",
                         pageRestaurants.size(),
                         pageIndex,
+                        lastPage,
                         cityName
                 ));
+                if (pageRestaurants.size() == 0) {
+                    // If it parsed nothing, retry it
+                    pageIndex--;
+                    continue;
+                }
                 cityRestaurants.addAll(pageRestaurants);
             }
         }
