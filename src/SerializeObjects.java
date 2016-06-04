@@ -1,16 +1,14 @@
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * Created by Sid on 5/31/2016.
  */
 public class SerializeObjects {
 
-    private static String delimiter = "\t";
+    private static String delimiter = ",";
 
     public void setDelimiter(String delimiter) {
         delimiter = delimiter;
@@ -91,6 +89,7 @@ public class SerializeObjects {
                 obj = iterator.next();
                 writeObject(fw, headers, obj);
             }
+            fw.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
