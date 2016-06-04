@@ -4,7 +4,8 @@
 public final class Selectors {
     public static final String cityUrlTemplate = "ul[class=\"RestaurantsList\"] a[title*=\"מסעדות ב%s\"]";
     public static final String allCityUrls = "div.Lists div.RestList:nth-of-type(3) a[title*=\"מסעדות ב\"]";
-    public static final String restaurantBlock = "div.ResultBlock";
+    public static final String restaurantBlock = "div.ResultBlockContent";
+    public static final String restRelUrl = "div.RestInfo a";
     public static final String pageAmount = "a.NumBtn";
     public static final String restName = "div.RestName";
     public static final String restRanking = "div.Stars>span";

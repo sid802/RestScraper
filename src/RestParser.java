@@ -1,5 +1,7 @@
+import com.sun.istack.internal.Nullable;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.DoubleDV;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
+import org.jetbrains.annotations.Contract;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -117,11 +119,16 @@ public class RestParser {
             lastPage = Integer.parseInt(page_source.select(pageAmountSelector).last().text());
             String cityPageUrl;
             ArrayList<Restaurant> pageRestaurants;
-            System.out.println("Last Page is: " + lastPage);
+            System.out.println(String.format("Last page of country %s is: %d", cityName, lastPage));
 
             for (int pageIndex=1; pageIndex  <=lastPage; pageIndex++) {
                 cityPageUrl = String.format(cityPageUrlTemplate, cityUrl, pageIndex);
                 pageRestaurants = getPageRestaurants(cityPageUrl, cityName);
+                System.out.println(String.format("Parsed %d pages from page %d in country %s",
+                        pageRestaurants.size(),
+                        pageIndex,
+                        cityName
+                ));
                 cityRestaurants.addAll(pageRestaurants);
             }
         }
@@ -167,7 +174,7 @@ public class RestParser {
      */
     private Restaurant parseRestaurantFromElement(Element restElement, String cityName) {
 
-        String id = restElement.attr("id").split("_")[1]; // Original ID = divRestaurantBlock_80215919
+        String id = restElement.select(Selectors.restRelUrl).attr("href").split("/")[2]; // href = "/rest/80215919
         String name = restElement.select(Selectors.restName).first().text();
 
         String rankingString = restElement.select(Selectors.restRanking).attr("style"); // Ranking is by width of red color
@@ -190,10 +197,10 @@ public class RestParser {
 
 
         String category = restElement.select(Selectors.restCategory).attr("title");
-        String foodKinds = restElement.select(Selectors.restFoodKinds).text();
-        String address = restElement.select(Selectors.restAddress).text();
-        String price = restElement.select(Selectors.restPrice).text();
-        String kosher = restElement.select(Selectors.restKosher).text();
+        String foodKinds = getTextFromElement(restElement.select(Selectors.restFoodKinds).first());
+        String address = getTextFromElement(restElement.select(Selectors.restAddress).first());
+        String price = getTextFromElement(restElement.select(Selectors.restPrice).first());
+        String kosher = getTextFromElement(restElement.select(Selectors.restKosher).first());
         String picUrl = restElement.select(Selectors.restPicUrl).attr("src");
 
         Element descrElement = restElement.select(Selectors.restDescr).first();
@@ -281,6 +288,18 @@ public class RestParser {
         else if (el.hasAttr(attr))
             return el.attr(attr);
         return null;
+    }
+
+    /**
+     *
+     * @param el Element
+     * @return Element's text, null if it doesn't have any
+     */
+    private String getTextFromElement(@Nullable Element el) {
+
+        if (el == null || el.text().isEmpty())
+            return null;
+        return el.text();
     }
 
 }
